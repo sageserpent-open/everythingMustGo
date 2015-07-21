@@ -51,4 +51,8 @@ class CheckoutTests extends FlatSpec with Checkers {
     val testCaseGenerator = Gen.containerOf[Seq, String](itemGenerator)
     check(Prop.forAll(testCaseGenerator)(items => 0 <= Checkout.apply(itemPrices, items)))
   }
+
+  "An acceptance test" should "be honoured in the observance and not the breach" in {
+    2.05 === Checkout.apply(Checkout.productionItemMap, List("Apple", "Apple", "Orange", "Orange"))
+  }
 }
