@@ -10,7 +10,7 @@ I would suggest the following tests:-
 
 i) no items purchased means no bill - (OK, a bill of zero).
 
-ii) one item purchased means the customer pays the price of that item.
+ii) one item purchased means the customer pays the price of that item - so what is that price? If I want to test for this, the test has to either have knowledge of the prices burnt into 'Checkout' - which is violating DRY, or I have to expose the prices as named values - Checkout.applePrice, Checkout.orangePrice - better, but not nice due due to the coupling and fiddling in the test to cover the two things. Why not just pass the prices in as mapped values - if I work to keep the test logic simple, this might actually be easier than having explicit constants. Or should I have modelled fruit as a union type with a price property - still a bit messy to test, and messier to extend without active patterns? Map and be damned!
 
 iii) if I purchase N items (could be the same ones repeated, maybe all in a bunch, maybe not), then the customer pays the sum of the bill for the first N-1 plus the price of the Nth item.
 
@@ -20,6 +20,9 @@ v) WON'T DO - suppose an item was entered when it shouldn't have by the checkout
 
 vi) Hang on, bills can't be negative if I don't have any reedemable offers or cashback.
 
-vii) Whoah - the checkout person might not always bother to CaptiTalise correctly.
+vii) Whoah - the checkout person might not always bother to CaptiTalise correctly. Hang on, the items are *scanned*. Let's just assume they always scan correctly, so no test for now. WON'T DO.
 
+viii) Thinking about having to test using a price map made me think about what happens if there are more than just apples and oranges (which are not the only fruit). I don't care ... the customer only cares about
+apples and oranges, so I don't have to define behaviour for lemons yet - that can wait. Only can it? Suppose instead of "lemon" the checkout person types 'applemon'? What then? Again, see point vii - WON'T DO.
 
+ASSUMPTION: work in integral pounds, so pence are fractional - do you pay 102p or £1.02?
