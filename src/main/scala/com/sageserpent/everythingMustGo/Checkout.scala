@@ -1,5 +1,5 @@
 package com.sageserpent.everythingMustGo
 
 object Checkout {
-  def apply(items: Iterable[String]): Double = ???
+  def apply(items: Iterable[String]): Double = 1
 }
