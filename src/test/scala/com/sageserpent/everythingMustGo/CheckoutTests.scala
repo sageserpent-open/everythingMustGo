@@ -44,4 +44,11 @@ class CheckoutTests extends FlatSpec with Checkers {
       billForItemsAnotherWay === billForItemsOneWay
     } })
   }
+
+  "A bill" should "not be negative." in {
+    val itemPrices = Map[String, Double]("Fred" -> 20, "Frieda" -> 30.5)
+    val itemGenerator = Gen.oneOf(itemPrices.keys.toSeq)
+    val testCaseGenerator = Gen.containerOf[Seq, String](itemGenerator)
+    check(Prop.forAll(testCaseGenerator)(items => 0 <= Checkout.apply(itemPrices, items)))
+  }
 }
