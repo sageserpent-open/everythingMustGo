@@ -1,7 +1,7 @@
 package com.sageserpent.everythingMustGo
 
 object Checkout {
-  def apply(itemPrices: Map[String, Double], items: Iterable[String]): Double = items map (itemPrices(_)) sum
+  def apply(itemPrices: Map[String, ItemData], items: Iterable[String]): Double = items map (itemPrices(_).price) sum
 
-  val productionItemMap = Map("Apple" -> 0.6, "Orange" -> 2.05)
+  val productionItemMap = Map("Apple" -> ItemData(price = 0.6), "Orange" -> ItemData(price = 2.05))
 }
