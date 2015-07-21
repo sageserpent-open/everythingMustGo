@@ -55,3 +55,5 @@ ii) Given an offer of X items of 'stuff' for the price of Y of them, if the cust
 To write these tests I need an item discount map - but if I pass this in to Checkout.apply, I then have the wrinkle of what if the item prices map doesn't align with the discount map. I can walk away from this by saying that the business doesn't care, but it would be a whole lot nicer if I had modelled with union types or classes - could have kept the price and discount together. As an alternative, I could map from item name to a tuple of price and discount. This leads the way to having more intelligent data - perhaps said tuple could become a self-describing item in a map with self-generated keys ... later.
 
 I will do part of this refactoring now, as it's quite easy, and it makes the API so much easier to write a test for.
+
+I am not doing tests or preconditions for malformed discounts, such as ones that make goods more expensive, or take all apples to zero cost.
