@@ -8,7 +8,7 @@ You fixed the items and prices and this is going to be written in a short iterat
 
 I would suggest the following tests:-
 
-i) no items purchased means no bill.
+i) no items purchased means no bill - (OK, a bill of zero).
 
 ii) one item purchased means the customer pays the price of that item.
 
@@ -17,5 +17,9 @@ iii) if I purchase N items (could be the same ones repeated, maybe all in a bunc
 iv) As a sanity check, a customer would expect that regardless of how they give the items to the checkout person, they get the same bill in all circumstances.
 
 v) WON'T DO - suppose an item was entered when it shouldn't have by the checkout person (or the customer changed their mind). Should there be a may of cancelling the last item, or the last apple or orange?
+
+vi) Hang on, bills can't be negative if I don't have any reedemable offers or cashback.
+
+vii) Whoah - the checkout person might not always bother to CaptiTalise correctly.
 
 
