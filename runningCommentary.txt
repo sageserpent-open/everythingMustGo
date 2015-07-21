@@ -1,0 +1,21 @@
+1. You asked for simple checkout functionality, and hinted that real input from a customer was required.
+
+So I give you the capability of producing a price given a list of strings, presumably harvested off standard input dutifully typed in by the checkout operator on an old 70's teletype.
+
+Rather than speculate on the nature of the IO system, let's focus on what we can test - take some strings and output a price.
+
+You fixed the items and prices and this is going to be written in a short iteration - so no need to worry about configuration.
+
+I would suggest the following tests:-
+
+i) no items purchased means no bill.
+
+ii) one item purchased means the customer pays the price of that item.
+
+iii) if I purchase N items (could be the same ones repeated, maybe all in a bunch, maybe not), then the customer pays the sum of the bill for the first N-1 plus the price of the Nth item.
+
+iv) As a sanity check, a customer would expect that regardless of how they give the items to the checkout person, they get the same bill in all circumstances.
+
+v) WON'T DO - suppose an item was entered when it shouldn't have by the checkout person (or the customer changed their mind). Should there be a may of cancelling the last item, or the last apple or orange?
+
+
