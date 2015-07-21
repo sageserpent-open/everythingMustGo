@@ -14,6 +14,8 @@ ii) one item purchased means the customer pays the price of that item - so what 
 
 iii) if I purchase N items (could be the same ones repeated, maybe all in a bunch, maybe not), then the customer pays the sum of the bill for the first N-1 plus the price of the Nth item.
 
+Time to Scalacheck - this how I would do things in reality. This is going to blow my time budget, but you as well find out how I work in practice ... I always prefer to stop and up my game to just coding fast.
+
 iv) As a sanity check, a customer would expect that regardless of how they give the items to the checkout person, they get the same bill in all circumstances.
 
 v) WON'T DO - suppose an item was entered when it shouldn't have by the checkout person (or the customer changed their mind). Should there be a may of cancelling the last item, or the last apple or orange?
@@ -26,3 +28,7 @@ viii) Thinking about having to test using a price map made me think about what h
 apples and oranges, so I don't have to define behaviour for lemons yet - that can wait. Only can it? Suppose instead of "lemon" the checkout person types 'applemon'? What then? Again, see point vii - WON'T DO.
 
 ASSUMPTION: work in integral pounds, so pence are fractional - do you pay 102p or £1.02?
+
+ASSUMPTION: the original specification had positive prices - so forget about testing (and thinking about the implications of) negative prices in the item map.
+
+If I am going to use the same itemMap in the tests for a sequence of operations, why don't I express this as a curried signature in Checkout.apply?
