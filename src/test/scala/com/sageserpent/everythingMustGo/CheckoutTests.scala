@@ -1,9 +1,10 @@
 package com.sageserpent.everythingMustGo
 
+import org.scalacheck.{Gen, Prop}
 import org.scalatest.FlatSpec
 import org.scalatest.prop.Checkers
-import org.scalacheck.Prop
-import org.scalacheck.Gen
+
+import scala.util.Random
 
 class CheckoutTests extends FlatSpec with Checkers {
   "No items" should "result in no billing" in {
@@ -27,5 +28,20 @@ class CheckoutTests extends FlatSpec with Checkers {
       val itemBill = Checkout.apply(itemPrices, Seq(item))
       allInOneGoBill === nItemsBill + itemBill
     }})
+  }
+
+  "The order of the items" should "not make any difference to the bill." in {
+    val itemPrices = Map[String, Double]("Fred" -> 20, "Frieda" -> 30.5)
+    val itemGenerator = Gen.oneOf(itemPrices.keys.toSeq)
+    val itemsGenerator = Gen.containerOf[Seq, String](itemGenerator)
+    val seedGenerator = Gen.oneOf(1, 2)
+    val testCaseGenerator = for {items <- itemsGenerator
+                                 seed <- seedGenerator
+                                 permutation = new Random(seed).shuffle(_: Seq[String])} yield items -> permutation
+    check(Prop.forAll(testCaseGenerator){case (items, permutation) => {
+      val billForItemsOneWay = Checkout.apply(itemPrices, items)
+      val billForItemsAnotherWay = Checkout.apply(itemPrices, permutation(items))
+      billForItemsAnotherWay === billForItemsOneWay
+    } })
   }
 }
