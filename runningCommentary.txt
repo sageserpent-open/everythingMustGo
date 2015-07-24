@@ -21,26 +21,26 @@ iv) As a sanity check, a customer would expect that regardless of how they give 
 
 v) WON'T DO - suppose an item was entered when it shouldn't have by the checkout person (or the customer changed their mind). Should there be a may of cancelling the last item, or the last apple or orange?
 
-vi) Hang on, bills can't be negative if I don't have any reedemable offers or cashback.
+vi) Hang on, bills can't be negative if I don't have any reedemable offers or cashback (and if prices are non-negative).
 
 vii) Whoah - the checkout person might not always bother to CaptiTalise correctly. Hang on, the items are *scanned*. Let's just assume they always scan correctly, so no test for now. WON'T DO.
 
 viii) Thinking about having to test using a price map made me think about what happens if there are more than just apples and oranges (which are not the only fruit). I don't care ... the customer only cares about
 apples and oranges, so I don't have to define behaviour for lemons yet - that can wait. Only can it? Suppose instead of "lemon" the checkout person types 'applemon'? What then? Again, see point vii - WON'T DO.
 
+This decision can be made explicit in the code by adding a precondition that only items that exist as keys in the map can be billed for, and correctly capitalised at that.
+
 ix) The business owner made an example bill - shouldn't this be tested as an acceptance test of sorts?
 
 ASSUMPTION: work in integral pounds, so pence are fractional - do you pay 102p or £1.02?
 
-ASSUMPTION: the original specification had positive prices - so forget about testing (and thinking about the implications of) negative prices in the item map.
+ASSUMPTION: the original specification had positive prices - so forget about testing (and thinking about the implications of) negative prices in the item map. OTOH, there is now a precondition tat an item price is positive.
 
 If I am going to use the same itemMap in the tests for a sequence of operations, why don't I express this as a curried signature in Checkout.apply?
 
 At this point I'm happy that I've achieved the spec - only there is no mention of apples or oranges in the tests. That is because it doesn't really matter - I submit that it was just as easy to test with an item map.
 
 I do need to supply a 'production item map', though...where to put it? For now, I'll lump it in the checkout and walk away ... there are ways of refactoring the dependency on the item map, say be DI or by using an abstract baseclass - or by just passing the thing from somewhere else. Depends on what the customer wants, let's stop now.
-
-OVERSIGHT - where are the preconditions on prices, given test #vi? Why didn't the tests fail in their absence? Ah - I specified an item price map explicitly. WON'T DO.
 
 2. Now come the discounts (but no cashback still, just reduced prices).
 
@@ -57,7 +57,6 @@ To write these tests I need an item discount map - but if I pass this in to Chec
 I will do part of this refactoring now, as it's quite easy, and it makes the API so much easier to write a test for.
 
 I am not doing tests or preconditions for malformed discounts, such as ones that make goods more expensive, or take all apples to zero cost.
-
 3. General refactoring.
 
 The item datums map is in practice a thing that rarely varies. Let's reflect that by using a curried function signature, which in turn allows us to hide the production item datums map away.
