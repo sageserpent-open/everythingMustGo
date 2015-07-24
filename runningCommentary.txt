@@ -40,8 +40,6 @@ At this point I'm happy that I've achieved the spec - only there is no mention o
 
 I do need to supply a 'production item map', though...where to put it? For now, I'll lump it in the checkout and walk away ... there are ways of refactoring the dependency on the item map, say be DI or by using an abstract baseclass - or by just passing the thing from somewhere else. Depends on what the customer wants, let's stop now.
 
-OVERSIGHT - where are the preconditions on prices, given test #vi? Why didn't the tests fail in their absence? Ah - I specified an item price map explicitly. WON'T DO.
-
 2. Now come the discounts (but no cashback still, just reduced prices).
 
 The business is really saying that if the customer buys in certain multiples of apples or oranges, they get the same bill as if they had bought a different number of these items.
