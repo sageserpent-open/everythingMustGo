@@ -81,12 +81,12 @@ class CheckoutTests extends FlatSpec with Checkers {
     check(Prop.forAllNoShrink(nItemsGenerator, itemGenerator)((nItems, item) => {
       val checkoutWithDiscounts = Checkout.apply(itemDatumsWithDiscounts) _
       val basicBill = checkoutWithDiscounts(nItems)
-      val ItemData(price, (amountEligibleForDiscount, asIfAmount)) = itemDatumsWithDiscounts(item)
+      val ItemData(price, (amountEligibleForDiscount, _)) = itemDatumsWithDiscounts(item)
       amountEligibleForDiscount - 1 === (1 to amountEligibleForDiscount count ((amount: Int) => {
-        val extraStuff = Seq.fill(amountEligibleForDiscount)(item)
+        val extraStuff = Seq.fill(amount)(item)
         val checkoutWithoutDiscounts = Checkout.apply(itemDatumsWithoutDiscounts) _
         val priceOfOneItemWithoutDiscount = checkoutWithoutDiscounts(Seq(item))
-        val usualPriceIncrease = amountEligibleForDiscount * priceOfOneItemWithoutDiscount
+        val usualPriceIncrease = amount * priceOfOneItemWithoutDiscount
         val totalBill = checkoutWithDiscounts(nItems ++ extraStuff)
         totalBill === basicBill + usualPriceIncrease
      }))
