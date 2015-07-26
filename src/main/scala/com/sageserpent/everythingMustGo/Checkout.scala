@@ -6,7 +6,8 @@ object Checkout {
     val itemLots = items.groupBy(identity).mapValues(_.size)
     itemLots map {case (item, lot) => {
       val ItemData(price, (amountEligibleForDiscount, asIfAmount)) = itemDatums(item)
-      val effectiveAmount = asIfAmount * lot / amountEligibleForDiscount + lot % amountEligibleForDiscount
+      val discountMultipleCount = lot / amountEligibleForDiscount // Need to truncate, and based on the lots from the customer!
+      val effectiveAmount = asIfAmount * discountMultipleCount + lot % amountEligibleForDiscount
       effectiveAmount * price
     }} sum
   }
