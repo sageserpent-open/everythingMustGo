@@ -78,18 +78,20 @@ class CheckoutTests extends FlatSpec with Checkers {
 
     val itemGenerator = Gen.oneOf(itemDatumsWithDiscounts.keys.toSeq)
     val nItemsGenerator = Gen.containerOf[Seq, String](itemGenerator)
-    check(Prop.forAllNoShrink(nItemsGenerator, itemGenerator)((nItems, item) => {
+    check(Prop.forAll(nItemsGenerator, itemGenerator)((nItems, item) => {
       val checkoutWithDiscounts = Checkout.apply(itemDatumsWithDiscounts) _
       val basicBill = checkoutWithDiscounts(nItems)
       val ItemData(price, (amountEligibleForDiscount, _)) = itemDatumsWithDiscounts(item)
-      amountEligibleForDiscount - 1 === (1 to amountEligibleForDiscount count ((amount: Int) => {
+      val checkoutWithoutDiscounts = Checkout.apply(itemDatumsWithoutDiscounts) _
+      val priceOfOneItemWithoutDiscount = checkoutWithoutDiscounts(Seq(item))
+      val billsForProgressivelyIncreasingAmountsOfStuff = 1 to amountEligibleForDiscount map ((amount: Int) => {
         val extraStuff = Seq.fill(amount)(item)
-        val checkoutWithoutDiscounts = Checkout.apply(itemDatumsWithoutDiscounts) _
-        val priceOfOneItemWithoutDiscount = checkoutWithoutDiscounts(Seq(item))
-        val usualPriceIncrease = amount * priceOfOneItemWithoutDiscount
         val totalBill = checkoutWithDiscounts(nItems ++ extraStuff)
-        totalBill === basicBill + usualPriceIncrease
-     }))
+        totalBill
+      })
+      val differencesInTheBills = basicBill +: billsForProgressivelyIncreasingAmountsOfStuff sliding 2 filter (2 == _.size) map ({case Seq(first, second) => second - first})
+      val numberOfDifferencesWithNoDiscountObserved = differencesInTheBills count (priceOfOneItemWithoutDiscount == _)
+      amountEligibleForDiscount - 1 === numberOfDifferencesWithNoDiscountObserved
     }))
   }
 }
