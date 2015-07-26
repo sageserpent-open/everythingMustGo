@@ -59,8 +59,6 @@ class CheckoutTests extends FlatSpec with Checkers {
 
     val itemGenerator = Gen.oneOf(itemDatumsWithDiscounts.keys.toSeq)
     val nItemsGenerator = Gen.containerOf[Seq, String](itemGenerator)
-    val testCaseGenerator = for {nItems <- nItemsGenerator
-                                 item <- itemGenerator} yield nItems -> item
     check(Prop.forAll(nItemsGenerator, itemGenerator)((nItems, item) => {
       val checkoutWithDiscounts = Checkout.apply(itemDatumsWithDiscounts) _
       val basicBill = checkoutWithDiscounts (nItems)
