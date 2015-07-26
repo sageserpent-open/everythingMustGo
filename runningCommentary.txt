@@ -58,7 +58,9 @@ To write these tests I need an item discount map - but if I pass this in to Chec
 
 I will do part of this refactoring now, as it's quite easy, and it makes the API so much easier to write a test for.
 
-I am not doing tests or preconditions for malformed discounts, such as ones that make goods more expensive, or take all apples to zero cost.
+I am not doing tests or preconditions for malformed discounts, such as ones that take all apples to zero cost.
+
+Actually, I will put in a precondition that a discount can't apply to no items at all - and for that matter, dishonest billing should not be in specification, so a discount cannot make goods more expensive.
 
 3. General refactoring.
 

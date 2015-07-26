@@ -50,24 +50,46 @@ class CheckoutTests extends FlatSpec with Checkers {
   }
 
   "An acceptance test" should "be honoured in the observance and not the breach" in {
-    2.05 === Checkout.apply(Checkout.productionItemDatums) (List("Apple", "Apple", "Orange", "Orange"))
+    2.05 === Checkout.apply(Checkout.productionItemDatums)(List("Apple", "Apple", "Orange", "Orange"))
   }
 
-  "Given a bunch of things with a bill, adding a discounted amount of some stuff" should "increase the price by the discount" in {
+  "Given a bunch of things with a bill, adding a discounted amount of some stuff" should "increase the price by the discounted amount" in {
     val itemDatumsWithDiscounts = Map("Fred" -> ItemData(price = 20, discount = 2 -> 1), "Frieda" -> ItemData(price = 30.5, discount = 3 -> 2))
-    val itemDatumsWithoutDiscounts = itemDatumsWithDiscounts map {case (itemName, itemData) => itemName -> itemData.copy(discount = 1 -> 1)}
+    val itemDatumsWithoutDiscounts = itemDatumsWithDiscounts map { case (itemName, itemData) => itemName -> itemData.copy(discount = 1 -> 1) }
 
     val itemGenerator = Gen.oneOf(itemDatumsWithDiscounts.keys.toSeq)
     val nItemsGenerator = Gen.containerOf[Seq, String](itemGenerator)
-    check(Prop.forAll(nItemsGenerator, itemGenerator)((nItems, item) => {
+    check(Prop.forAllNoShrink(nItemsGenerator, itemGenerator)((nItems, item) => {
       val checkoutWithDiscounts = Checkout.apply(itemDatumsWithDiscounts) _
-      val basicBill = checkoutWithDiscounts (nItems)
-      val ItemData(price, (amountEligibleForDiscount, asIfAmount)) = itemDatumsWithDiscounts(item) // Where are the named pattern variables, like in F#? Sigh.
+      val basicBill = checkoutWithDiscounts(nItems)
+      val ItemData(price, (amountEligibleForDiscount, asIfAmount)) = itemDatumsWithDiscounts(item)
       val extraStuff = Seq.fill(amountEligibleForDiscount)(item)
       val checkoutWithoutDiscounts = Checkout.apply(itemDatumsWithoutDiscounts) _
-      val expectedDiscountedPriceIncrease = asIfAmount * checkoutWithoutDiscounts (Seq(item))
-      val totalBill = checkoutWithDiscounts (nItems ++ extraStuff)
-      totalBill === basicBill + expectedDiscountedPriceIncrease
+      val priceOfOneItemWithoutDiscount = checkoutWithoutDiscounts(Seq(item))
+      val discountedPriceIncrease = asIfAmount * priceOfOneItemWithoutDiscount
+      val totalBill = checkoutWithDiscounts(nItems ++ extraStuff)
+      totalBill === basicBill + discountedPriceIncrease
     }))
-}
+  }
+
+  "Given a bunch of things with a bill, repeatedly adding an amount of some stuff in increments of one lot up to the discounted amount" should "increase the price by the usual amount in all but one case." in {
+    val itemDatumsWithDiscounts = Map("Fred" -> ItemData(price = 20, discount = 2 -> 1), "Frieda" -> ItemData(price = 30.5, discount = 3 -> 2))
+    val itemDatumsWithoutDiscounts = itemDatumsWithDiscounts map { case (itemName, itemData) => itemName -> itemData.copy(discount = 1 -> 1) }
+
+    val itemGenerator = Gen.oneOf(itemDatumsWithDiscounts.keys.toSeq)
+    val nItemsGenerator = Gen.containerOf[Seq, String](itemGenerator)
+    check(Prop.forAllNoShrink(nItemsGenerator, itemGenerator)((nItems, item) => {
+      val checkoutWithDiscounts = Checkout.apply(itemDatumsWithDiscounts) _
+      val basicBill = checkoutWithDiscounts(nItems)
+      val ItemData(price, (amountEligibleForDiscount, asIfAmount)) = itemDatumsWithDiscounts(item)
+      amountEligibleForDiscount - 1 === (1 until amountEligibleForDiscount count ((amount: Int) => {
+        val extraStuff = Seq.fill(amountEligibleForDiscount)(item)
+        val checkoutWithoutDiscounts = Checkout.apply(itemDatumsWithoutDiscounts) _
+        val priceOfOneItemWithoutDiscount = checkoutWithoutDiscounts(Seq(item))
+        val usualPriceIncrease = amountEligibleForDiscount * priceOfOneItemWithoutDiscount
+        val totalBill = checkoutWithDiscounts(nItems ++ extraStuff)
+        totalBill === basicBill + usualPriceIncrease
+     }))
+    }))
+  }
 }
