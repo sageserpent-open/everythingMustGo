@@ -7,18 +7,21 @@ import org.scalatest.prop.Checkers
 import scala.util.Random
 
 class CheckoutTests extends FlatSpec with Checkers {
-  "No items" should "result in no billing" in {
-    assert(0 === Checkout(Map.empty)(Iterable.empty))
-  }
-  "One item" should "result in a bill that is its price." in {
-    val item = "Alpha"
-    val price = 10
-    assert(price === Checkout.apply(Map(item -> ItemData(price = price)))(Seq(item)))
-  }
-
   val itemDatums = Map("Fred" -> ItemData(price = 20), "Frieda" -> ItemData(price = 30.5))
 
   val checkout: (Iterable[String]) => Double = Checkout.apply(itemDatums)
+
+  "No items" should "result in no billing" in {
+    assert(0 === Checkout(Map.empty)(Iterable.empty))
+    assert(0 === checkout(Iterable.empty))
+  }
+  "One item" should "result in a bill that is its price." in {
+    val itemGenerator = Gen.oneOf(itemDatums.keys.toSeq)
+    check(Prop.forAllNoShrink(itemGenerator)(item => {
+      val Some(ItemData(price, _)) = itemDatums.get(item)
+      price === checkout(Seq(item))
+    }))
+  }
 
   "N+1 items" should "result in the same bill as purchasing the first N and the last one separately and taking the total." in {
     val itemGenerator = Gen.oneOf(itemDatums.keys.toSeq)

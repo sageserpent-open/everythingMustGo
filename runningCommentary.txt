@@ -8,7 +8,7 @@ You fixed the items and prices and this is going to be written in a short iterat
 
 I would suggest the following tests:-
 
-i) no items purchased means no bill - (OK, a bill of zero).
+i) no items purchased means no bill - (OK, a bill of zero). Given the use of a map, this should hold both for the usual case of a map that actually has item data, and the trivial case of having no items in the shop in the first place.
 
 ii) one item purchased means the customer pays the price of that item - so what is that price? If I want to test for this, the test has to either have knowledge of the prices burnt into 'Checkout' - which is violating DRY, or I have to expose the prices as named values - Checkout.applePrice, Checkout.orangePrice - better, but not nice due due to the coupling and fiddling in the test to cover the two things. Why not just pass the prices in as mapped values - if I work to keep the test logic simple, this might actually be easier than having explicit constants. Or should I have modelled fruit as a union type with a price property - still a bit messy to test, and messier to extend without active patterns? Map and be damned!
 Hmmm - now that I have used Scalacheck I think it would have been easy to use a union type or plain old class hierarchy with runtime binding. OTOH, I can imagine this might change if the business wants to add more items - but then a class hierarchy or active patterns would work. Oh well.
