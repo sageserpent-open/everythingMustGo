@@ -65,5 +65,3 @@ Actually, I will put in a precondition that a discount can't apply to no items a
 3. General refactoring.
 
 The item datums map is in practice a thing that rarely varies. Let's reflect that by using a curried function signature, which in turn allows us to hide the production item datums map away.
-
-Fake change to test whether Git synchronization still works after major upgrade of Plastic SCM installation.
