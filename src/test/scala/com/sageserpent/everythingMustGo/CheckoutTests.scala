@@ -53,11 +53,16 @@ class CheckoutTests extends FlatSpec with Checkers {
   }
 
   "An acceptance test" should "be honoured in the observance and not the breach" in {
-    2.05 === Checkout.apply(Checkout.productionItemDatums)(List("Apple", "Apple", "Orange", "Orange"))
+    assert(2.05 === Checkout.apply(Checkout.productionItemDatums)(List("Apple", "Apple", "Orange", "Orange")))
   }
 
    it should "also handle melons" in {
-     1 === Checkout.apply(Checkout.productionItemDatums)(List("Melon"))
+     assert(1 === Checkout.apply(Checkout.productionItemDatums)(List("Melon")))
+   }
+
+   it should "show the correct discounting on melons" in {
+     assert(2.0 === Checkout.apply(Checkout.productionItemDatums)(List.fill(3)("Melon")))
+     assert(3.0 === Checkout.apply(Checkout.productionItemDatums)(List.fill(4)("Melon")))
    }
 
   "Given a bunch of things with a bill, adding a discounted amount of some stuff" should "increase the price by the discounted amount" in {
