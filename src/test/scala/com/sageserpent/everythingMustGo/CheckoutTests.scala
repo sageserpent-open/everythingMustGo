@@ -56,6 +56,10 @@ class CheckoutTests extends FlatSpec with Checkers {
     2.05 === Checkout.apply(Checkout.productionItemDatums)(List("Apple", "Apple", "Orange", "Orange"))
   }
 
+   it should "also handle melons" in {
+     1 === Checkout.apply(Checkout.productionItemDatums)(List("Melon"))
+   }
+
   "Given a bunch of things with a bill, adding a discounted amount of some stuff" should "increase the price by the discounted amount" in {
     val itemDatumsWithDiscounts = Map("Fred" -> ItemData(price = 20, discount = 2 -> 1), "Frieda" -> ItemData(price = 30.5, discount = 3 -> 2))
     val itemDatumsWithoutDiscounts = itemDatumsWithDiscounts map { case (itemName, itemData) => itemName -> itemData.copy(discount = 1 -> 1) }
