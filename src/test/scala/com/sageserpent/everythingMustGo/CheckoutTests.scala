@@ -21,11 +21,17 @@ class CheckoutTests extends FlatSpec with Checkers {
     val nItemsGenerator = Gen.containerOf[Seq, String](itemGenerator)
     val testCaseGenerator = for {nItems <- nItemsGenerator
                                  item <- itemGenerator} yield nItems -> item
-    check(Prop.forAll(testCaseGenerator){case (nItems, item) => {
+    check(Prop.forAll(testCaseGenerator) { case (nItems, item) => {
       val allInOneGoBill = Checkout.apply(itemPrices, nItems :+ item)
       val nItemsBill = Checkout.apply(itemPrices, nItems)
       val itemBill = Checkout.apply(itemPrices, Seq(item))
       allInOneGoBill === nItemsBill + itemBill
-    }})
+    }
+    })
+  }
+
+  "An acceptance test" should "be honoured in the observance and not the breach" in {
+    assert(2.05 === Checkout.apply(Map("Apple" -> 0.6, "Orange" -> 0.25), List("Apple", "Apple", "Orange", "Apple")))
   }
 }
+
