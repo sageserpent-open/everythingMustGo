@@ -12,5 +12,5 @@ object Checkout {
     }} sum
   }
 
-  val productionItemDatums = Map("Apple" -> ItemData(price = 0.6), "Orange" -> ItemData(price = 2.05), "Melon" -> ItemData(price = 1.0, discount = 3 -> 2))
+  val productionItemDatums = Map("Apple" -> ItemData(price = 0.6), "Orange" -> ItemData(price = 0.25), "Melon" -> ItemData(price = 1.0, discount = 3 -> 2))
 }

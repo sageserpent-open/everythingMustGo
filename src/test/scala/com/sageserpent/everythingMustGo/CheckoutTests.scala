@@ -53,17 +53,17 @@ class CheckoutTests extends FlatSpec with Checkers {
   }
 
   "An acceptance test" should "be honoured in the observance and not the breach" in {
-    assert(2.05 === Checkout.apply(Checkout.productionItemDatums)(List("Apple", "Apple", "Orange", "Orange")))
+    assert(2.05 === Checkout.apply(Checkout.productionItemDatums)(List("Apple", "Apple", "Orange", "Apple")))
   }
 
-   it should "also handle melons" in {
-     assert(1 === Checkout.apply(Checkout.productionItemDatums)(List("Melon")))
-   }
+  it should "also handle melons" in {
+    assert(1 === Checkout.apply(Checkout.productionItemDatums)(List("Melon")))
+  }
 
-   it should "show the correct discounting on melons" in {
-     assert(2.0 === Checkout.apply(Checkout.productionItemDatums)(List.fill(3)("Melon")))
-     assert(3.0 === Checkout.apply(Checkout.productionItemDatums)(List.fill(4)("Melon")))
-   }
+  it should "show the correct discounting on melons" in {
+    assert(2.0 === Checkout.apply(Checkout.productionItemDatums)(List.fill(3)("Melon")))
+    assert(3.0 === Checkout.apply(Checkout.productionItemDatums)(List.fill(4)("Melon")))
+  }
 
   "Given a bunch of things with a bill, adding a discounted amount of some stuff" should "increase the price by the discounted amount" in {
     val itemDatumsWithDiscounts = Map("Fred" -> ItemData(price = 20, discount = 2 -> 1), "Frieda" -> ItemData(price = 30.5, discount = 3 -> 2))
@@ -101,7 +101,9 @@ class CheckoutTests extends FlatSpec with Checkers {
         val totalBill = checkoutWithDiscounts(nItems ++ extraStuff)
         totalBill
       })
-      val differencesInTheBills = basicBill +: billsForProgressivelyIncreasingAmountsOfStuff sliding 2 filter (2 == _.size) map ({case Seq(first, second) => second - first})
+      val differencesInTheBills = basicBill +: billsForProgressivelyIncreasingAmountsOfStuff sliding 2 filter (2 == _.size) map ({
+        case Seq(first, second) => second - first
+      })
       val numberOfDifferencesWithNoDiscountObserved = differencesInTheBills count (priceOfOneItemWithoutDiscount == _)
       amountEligibleForDiscount - 1 === numberOfDifferencesWithNoDiscountObserved
     }))
